@@ -1,0 +1,504 @@
+/* =========================================
+   GLOBAL RESET & FONTS
+========================================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #FFFFFF;
+    font-family: 'DM Sans', sans-serif;
+    padding: 40px;
+}
+
+/* =========================================
+   SHARED LAYOUT (Header & Container)
+========================================= */
+.app-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1440px;
+    height: 1024px;
+    min-height: 860px;
+    background: #EAF4F4;
+    border: 4px solid #1E1E1E;
+    border-radius: 32px;
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+}
+
+.app-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    width: 100%;
+    height: 80px;
+    background: #FFFFFF;
+    border-bottom: 3px solid #1E1E1E;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-badge {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    background: #F7A8B8;
+    border-radius: 20px;
+}
+
+.logo-title {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 800;
+    font-size: 24px;
+    color: #1E1E1E;
+}
+
+.nav-links {
+    display: flex;
+    gap: 16px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    border-radius: 100px;
+    font-weight: 700;
+    font-size: 14px;
+    color: #1E1E1E;
+    text-decoration: none;
+}
+
+.nav-item.active {
+    background: #BFD8BD;
+    border: 2px solid #1E1E1E;
+}
+
+/* =========================================
+   SCREEN 1: MAIN GARDEN
+========================================= */
+.garden-canvas {
+    position: relative;
+    flex-grow: 1;
+    background: linear-gradient(135deg, #D8ECEF 25%, #C6E4E6 75%);
+    border-bottom: 3px solid #1E1E1E;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.cloud {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 100px;
+}
+.cloud-1 { width: 132px; height: 53px; left: 100px; top: 40px; }
+.cloud-2 { width: 121px; height: 48px; left: 520px; top: 30px; }
+.cloud-3 { width: 99px; height: 40px; left: 950px; top: 60px; }
+
+.hill-back {
+    position: absolute;
+    width: 900px;
+    height: 400px;
+    left: -200px;
+    top: 280px;
+    background: #9BBFA0;
+    border: 3px solid #1E1E1E;
+    border-radius: 50%;
+}
+
+.hill-front {
+    position: absolute;
+    width: 1000px;
+    height: 450px;
+    left: 450px;
+    top: 250px;
+    background: #BFD8BD;
+    border: 3px solid #1E1E1E;
+    border-radius: 50%;
+}
+
+.instruction-callout {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: #FFFFFF;
+    border: 2.5px solid #1E1E1E;
+    box-shadow: 0px 8px 16px rgba(30, 30, 30, 0.08);
+    border-radius: 16px;
+    font-weight: 700;
+    font-size: 14px;
+    color: #1E1E1E;
+    z-index: 20;
+}
+
+.planted-cat {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    transform: translate(-50%, -100%);
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.cat-bubble {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 56px;
+    height: 56px;
+    background: #FFFFFF;
+    border: 3px solid #1E1E1E;
+    box-shadow: 0px 8px 16px rgba(30, 30, 30, 0.08);
+    border-radius: 28px;
+    font-size: 28px;
+}
+
+.soil {
+    width: 24px;
+    height: 6px;
+    background: #7A6250;
+    border-radius: 100px;
+}
+
+.bottom-picker-tray {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 32px;
+    gap: 16px;
+    background: #FFFFFF;
+    height: 140px;
+}
+
+.picker-title {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: #1E1E1E;
+}
+
+.emoji-buttons {
+    display: flex;
+    gap: 16px;
+}
+
+.emoji-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 72px;
+    height: 76px;
+    background: #FFFFFF;
+    border: 2.5px solid #1E1E1E;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.emoji-btn span.emoji { font-size: 28px; }
+.emoji-btn span.label { font-size: 11px; font-weight: 700; color: #1E1E1E; margin-top: 4px; }
+
+.emoji-btn.active {
+    background: #F7A8B8;
+    box-shadow: 0px 8px 16px rgba(30, 30, 30, 0.08);
+}
+
+@keyframes popIn {
+    0% { transform: translate(-50%, -100%) scale(0); }
+    100% { transform: translate(-50%, -100%) scale(1); }
+}
+
+/* =========================================
+   SHARED CONTENT BODY (Screens 2 & 3)
+========================================= */
+.content-body {
+    display: flex;
+    flex-direction: column;
+    padding: 40px;
+    gap: 32px;
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+.title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.title-block {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.title-block h2 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 800;
+    font-size: 32px;
+    line-height: 38px;
+    color: #1E1E1E;
+    margin: 0;
+}
+
+.title-block p {
+    font-size: 16px;
+    line-height: 21px;
+    color: #5C6A6C;
+    margin: 0;
+}
+
+.back-btn {
+    display: flex;
+    align-items: center;
+    padding: 10px 18px;
+    gap: 8px;
+    background: #FFFFFF;
+    border: 2px solid #1E1E1E;
+    border-radius: 100px;
+    font-weight: 700;
+    font-size: 14px;
+    color: #1E1E1E;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+    background: #BFD8BD;
+}
+
+/* =========================================
+   SCREEN 2: MY DIARY GRID
+========================================= */
+.diary-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+}
+
+.grid-row {
+    display: flex;
+    gap: 24px;
+    width: 100%;
+}
+
+.diary-card {
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    gap: 16px;
+    flex: 1;
+    background: #FFFFFF;
+    border: 3px solid #1E1E1E;
+    box-shadow: 0px 8px 16px rgba(30, 30, 30, 0.08);
+    border-radius: 24px;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.emoji-ring {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 56px;
+    height: 56px;
+    background: #EAF4F4;
+    border: 2px solid #1E1E1E;
+    border-radius: 28px;
+    font-size: 28px;
+}
+
+.badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 12px;
+    background: #F7A8B8;
+    border: 1.5px solid #1E1E1E;
+    border-radius: 100px;
+    font-weight: 700;
+    font-size: 12px;
+    color: #1E1E1E;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.timestamp {
+    font-weight: 600;
+    font-size: 12px;
+    color: #5C6A6C;
+}
+
+.note-text {
+    font-size: 14px;
+    line-height: 140%;
+    color: #1E1E1E;
+    margin: 0;
+}
+
+/* =========================================
+   SCREEN 3: GLOBAL STATS CHART
+========================================= */
+.chart-card {
+    display: flex;
+    flex-direction: column;
+    padding: 32px;
+    gap: 24px;
+    background: #FFFFFF;
+    border: 3px solid #1E1E1E;
+    box-shadow: 0px 8px 16px rgba(30, 30, 30, 0.08);
+    border-radius: 24px;
+    width: 100%;
+}
+
+.chart-title {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 24px;
+    color: #1E1E1E;
+    margin: 0;
+}
+
+.chart-frame {
+    display: flex;
+    gap: 16px;
+    height: 320px;
+    width: 100%;
+}
+
+.y-axis {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 32px;
+    height: 280px;
+    font-weight: 600;
+    font-size: 12px;
+    color: #5C6A6C;
+}
+
+.plot-column {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex-grow: 1;
+    position: relative;
+}
+
+.plot-area {
+    position: relative;
+    width: 100%;
+    height: 280px;
+}
+
+.grid-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 0;
+    border-top: 1px solid #E5E5E5;
+}
+
+.grid-line.base {
+    border-top: 2px solid #1E1E1E;
+}
+
+.bars-container {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0 40px;
+}
+
+.bar-column {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 44px;
+}
+
+.bar-percentage {
+    font-weight: 700;
+    font-size: 12px;
+    color: #1E1E1E;
+}
+
+.bar-shape {
+    width: 44px;
+    background: #F7A8B8;
+    border: 2.5px solid #1E1E1E;
+    border-bottom: none;
+    border-radius: 10px 10px 0px 0px;
+    transition: height 0.4s ease;
+}
+
+.bar-emoji {
+    font-size: 20px;
+    margin-top: 4px;
+}
+
+.chart-legend {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 12px;
+    gap: 24px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    color: #1E1E1E;
+}
+
+.legend-box {
+    width: 16px;
+    height: 16px;
+    background: #F7A8B8;
+    border: 1.5px solid #1E1E1E;
+    border-radius: 4px;
+}
+
+.legend-stats {
+    font-size: 13px;
+    color: #5C6A6C;
+}

@@ -1,0 +1,74 @@
+@page "/my-garden"
+@rendermode InteractiveWebAssembly
+
+<div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+        <div class="logo">
+            <div class="logo-badge">🌱</div>
+            <span class="logo-title">Cat Mood Garden</span>
+        </div>
+        <nav class="nav-links">
+            <NavLink href="" class="nav-item">🏡 My Garden</NavLink>
+            <NavLink href="my-garden" class="nav-item active">📖 My Diary</NavLink>
+            <NavLink href="stats" class="nav-item">📈 Vibe Stats</NavLink>
+        </nav>
+    </header>
+
+    <!-- Main Diary Content -->
+    <main class="content-body">
+        <div class="title-row">
+            <div class="title-block">
+                <h2>My Cat Diary</h2>
+                <p>A chronological memory lane of your planted feelings.</p>
+            </div>
+            <a href="" class="back-btn">
+                <span>←</span> Back to Garden
+            </a>
+        </div>
+
+        <div class="diary-grid">
+            @if (!diaryEntries.Any())
+            {
+                <div class="diary-card">
+                    <p class="note-text">No diary entries recorded yet! Plant a cat mood in the garden to start your log.</p>
+                </div>
+            }
+            else
+            {
+                @foreach (var rowChunk in diaryEntries.Chunk(3))
+                {
+                    <div class="grid-row">
+                        @foreach (var entry in rowChunk)
+                        {
+                            <div class="diary-card">
+                                <div class="card-header">
+                                    <div class="emoji-ring">@entry.Emoji</div>
+                                    <div class="badge">@entry.MoodName</div>
+                                </div>
+                                <div class="card-body">
+                                    <span class="timestamp">@entry.TimeAgo</span>
+                                    <p class="note-text">@entry.Note</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            }
+        </div>
+    </main>
+</div>
+
+@code {
+    private record DiaryEntry(string Emoji, string MoodName, string TimeAgo, string Note);
+
+    private List<DiaryEntry> diaryEntries = new()
+    {
+        new("😴", "Sleepy", "1 hour ago", "Had a cozy afternoon nap under the imaginary big tree. Feeling refreshed and lazy."),
+        new("🤩", "Starry", "3 hours ago", "Wrote a great line of code. Felt like a programming superstar wizard cat! ✨"),
+        new("😍", "In Love", "Yesterday, 4:12 PM", "Had an excellent cup of hot cocoa with extra marshmallows. Absolute pure love."),
+        new("😾", "Angry", "Yesterday, 10:00 AM", "Stubbed my little paw toe on the doorframe. Angrily planted a grumpy cat."),
+        new("😸", "Happy", "2 days ago", "Sunshine was streaming perfectly onto my desk. Felt warm and content."),
+        new("🙄", "Sassy", "3 days ago", "Received an email that could have easily been a slack message. Sassy eye-roll.")
+    };
+}

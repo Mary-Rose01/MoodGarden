@@ -1,0 +1,254 @@
+﻿@page "/stats"
+@rendermode InteractiveWebAssembly
+
+<div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+        <div class="logo">
+            <div class="logo-badge">🌱</div>
+            <span class="logo-title">Cat Mood Garden</span>
+        </div>
+        <nav class="nav-links">
+            <NavLink href="" class="nav-item">🏡 My Garden</NavLink>
+            <NavLink href="my-garden" class="nav-item">📖 My Diary</NavLink>
+            <NavLink href="stats" class="nav-item active">📈 Vibe Stats</NavLink>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="content-body">
+        <div class="title-row">
+            <div class="title-block">
+                <h2>Global Cat Vibe Check</h2>
+                <p>See how other gardeners around the globe are blooming today.</p>
+            </div>
+            <a href="" class="back-btn">
+                <span>←</span> Back to Garden
+            </a>
+        </div>
+
+        <div class="chart-card">
+            <h3 class="chart-title">Current Moods (Last 24 Hours)</h3>
+
+            <div class="chart-frame">
+                <!-- Y Axis -->
+                <div class="y-axis">
+                    <span>100%</span>
+                    <span>75%</span>
+                    <span>50%</span>
+                    <span>25%</span>
+                    <span>0%</span>
+                </div>
+
+                <!-- Plot Area -->
+                <div class="plot-column">
+                    <div class="plot-area">
+                        <!-- Horizontal Gridlines -->
+                        <div class="grid-line" style="top: 0%;"></div>
+                        <div class="grid-line" style="top: 25%;"></div>
+                        <div class="grid-line" style="top: 50%;"></div>
+                        <div class="grid-line" style="top: 75%;"></div>
+                        <div class="grid-line base" style="top: 100%;"></div>
+
+                        <!-- Bar Columns -->
+                        <div class="bars-container">
+                            @foreach (var mood in globalMoods)
+                            {
+                                <div class="bar-column">
+                                    <span class="bar-percentage">@(mood.Percentage)%</span>
+                                    <div class="bar-shape" style="height: @(mood.Percentage * 2.8)px;"></div>
+                                    <span class="bar-emoji">@mood.Emoji</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Legend -->
+            <div class="chart-legend">
+                <div class="legend-item">
+                    <div class="legend-box"></div>
+                    <span>Planted Moods</span>
+                </div>
+                <span class="legend-stats">Total active plants: 12,482 today</span>
+            </div>
+        </div>
+    </main>
+</div>
+
+@code {
+    private record MoodStat(string Emoji, int Percentage);
+
+    private List<MoodStat> globalMoods = new()
+    {
+        new("😸", 32),
+        new("😿", 8),
+        new("😾", 12),
+        new("😴", 48),
+        new("🤩", 24),
+        new("😳", 15),
+        new("😍", 58),
+        new("🙄", 18)
+    };
+}
+
+@page "/"
+@rendermode InteractiveWebAssembly
+
+<div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+        <div class="logo">
+            <div class="logo-badge">🌱</div>
+            <span class="logo-title">Cat Mood Garden</span>
+        </div>
+        <nav class="nav-links">
+            <NavLink href="" class="nav-item active">🏡 My Garden</NavLink>
+            <NavLink href="my-garden" class="nav-item">📖 My Diary</NavLink>
+            <NavLink href="stats" class="nav-item">📈 Vibe Stats</NavLink>
+        </nav>
+    </header>
+
+    <!-- Canvas -->
+    <div class="garden-canvas" @onclick="PlantCat">
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
+        
+        <div class="hill-back"></div>
+        <div class="hill-front"></div>
+
+        <div class="instruction-callout">
+            💡 Select your mood cat and tap anywhere in the garden to plant!
+        </div>
+
+        @foreach (var cat in plantedCats)
+        {
+            <div class="planted-cat" style="left: @(cat.PositionX)%; top: @(cat.PositionY)%;">
+                <div class="cat-bubble">@cat.Emoji</div>
+                <div class="soil"></div>
+            </div>
+        }
+    </div>
+
+    <!-- Bottom Tray -->
+    <div class="bottom-picker-tray">
+        <span class="picker-title">How are you feeling right now? Pick a mood:</span>
+        <div class="emoji-buttons">
+            @foreach (var mood in moodOptions)
+            {
+                <button class="emoji-btn @(selectedEmoji == mood.Emoji ? "active" : "")" 
+                        @onclick="() => selectedEmoji = mood.Emoji" 
+                        @onclick:stopPropagation="true">
+                    <span class="emoji">@mood.Emoji</span>
+                    <span class="label">@mood.Name</span>
+                </button>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private string selectedEmoji = "😸";
+    private static List<CatPlant> plantedCats = new();
+
+    private record CatPlant(string Emoji, double PositionX, double PositionY);
+    private record MoodOption(string Emoji, string Name);
+
+    private List<MoodOption> moodOptions = new()
+    {
+        new("😸", "Happy"),
+        new("😿", "Sad"),
+        new("😾", "Angry"),
+        new("😴", "Sleepy"),
+        new("🤩", "Starry"),
+        new("😳", "Flustered"),
+        new("😍", "In Love"),
+        new("🙄", "Sassy")
+    };
+
+    private void PlantCat(MouseEventArgs e)
+    {
+        // Calculate rough percentage coordinates based on canvas click
+        double percentX = (e.OffsetX / 1440.0) * 100;
+        double percentY = (e.OffsetY / 804.0) * 100;
+
+        plantedCats.Add(new CatPlant(selectedEmoji, percentX, percentY));
+    }
+}
+
+@page "/my-garden"
+@rendermode InteractiveWebAssembly
+
+<div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+        <div class="logo">
+            <div class="logo-badge">🌱</div>
+            <span class="logo-title">Cat Mood Garden</span>
+        </div>
+        <nav class="nav-links">
+            <NavLink href="" class="nav-item">🏡 My Garden</NavLink>
+            <NavLink href="my-garden" class="nav-item active">📖 My Diary</NavLink>
+            <NavLink href="stats" class="nav-item">📈 Vibe Stats</NavLink>
+        </nav>
+    </header>
+
+    <!-- Main Diary Content -->
+    <main class="content-body">
+        <div class="title-row">
+            <div class="title-block">
+                <h2>My Cat Diary</h2>
+                <p>A chronological memory lane of your planted feelings.</p>
+            </div>
+            <a href="" class="back-btn">
+                <span>←</span> Back to Garden
+            </a>
+        </div>
+
+        <div class="diary-grid">
+            @if (!diaryEntries.Any())
+            {
+                <div class="diary-card">
+                    <p class="note-text">No diary entries recorded yet! Plant a cat mood in the garden to start your log.</p>
+                </div>
+            }
+            else
+            {
+                @foreach (var rowChunk in diaryEntries.Chunk(3))
+                {
+                    <div class="grid-row">
+                        @foreach (var entry in rowChunk)
+                        {
+                            <div class="diary-card">
+                                <div class="card-header">
+                                    <div class="emoji-ring">@entry.Emoji</div>
+                                    <div class="badge">@entry.MoodName</div>
+                                </div>
+                                <div class="card-body">
+                                    <span class="timestamp">@entry.TimeAgo</span>
+                                    <p class="note-text">@entry.Note</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            }
+        </div>
+    </main>
+</div>
+
+@code {
+    private record DiaryEntry(string Emoji, string MoodName, string TimeAgo, string Note);
+
+    private List<DiaryEntry> diaryEntries = new()
+    {
+        new("😴", "Sleepy", "1 hour ago", "Had a cozy afternoon nap under the imaginary big tree. Feeling refreshed and lazy."),
+        new("🤩", "Starry", "3 hours ago", "Wrote a great line of code. Felt like a programming superstar wizard cat! ✨"),
+        new("😍", "In Love", "Yesterday, 4:12 PM", "Had an excellent cup of hot cocoa with extra marshmallows. Absolute pure love."),
+        new("😾", "Angry", "Yesterday, 10:00 AM", "Stubbed my little paw toe on the doorframe. Angrily planted a grumpy cat."),
+        new("😸", "Happy", "2 days ago", "Sunshine was streaming perfectly onto my desk. Felt warm and content."),
+        new("🙄", "Sassy", "3 days ago", "Received an email that could have easily been a slack message. Sassy eye-roll.")
+    };
+}

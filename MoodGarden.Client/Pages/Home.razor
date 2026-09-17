@@ -1,0 +1,84 @@
+﻿@page "/"
+@rendermode InteractiveWebAssembly
+
+<div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+        <div class="logo">
+            <div class="logo-badge">🌱</div>
+            <span class="logo-title">Cat Mood Garden</span>
+        </div>
+        <nav class="nav-links">
+            <NavLink href="" class="nav-item active">🏡 My Garden</NavLink>
+            <NavLink href="my-garden" class="nav-item">📖 My Diary</NavLink>
+            <NavLink href="stats" class="nav-item">📈 Vibe Stats</NavLink>
+        </nav>
+    </header>
+
+    <!-- Canvas -->
+    <div class="garden-canvas" @onclick="PlantCat">
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
+        
+        <div class="hill-back"></div>
+        <div class="hill-front"></div>
+
+        <div class="instruction-callout">
+            💡 Select your mood cat and tap anywhere in the garden to plant!
+        </div>
+
+        @foreach (var cat in plantedCats)
+        {
+            <div class="planted-cat" style="left: @(cat.PositionX)%; top: @(cat.PositionY)%;">
+                <div class="cat-bubble">@cat.Emoji</div>
+                <div class="soil"></div>
+            </div>
+        }
+    </div>
+
+    <!-- Bottom Tray -->
+    <div class="bottom-picker-tray">
+        <span class="picker-title">How are you feeling right now? Pick a mood:</span>
+        <div class="emoji-buttons">
+            @foreach (var mood in moodOptions)
+            {
+                <button class="emoji-btn @(selectedEmoji == mood.Emoji ? "active" : "")" 
+                        @onclick="() => selectedEmoji = mood.Emoji" 
+                        @onclick:stopPropagation="true">
+                    <span class="emoji">@mood.Emoji</span>
+                    <span class="label">@mood.Name</span>
+                </button>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private string selectedEmoji = "😸";
+    private static List<CatPlant> plantedCats = new();
+
+    private record CatPlant(string Emoji, double PositionX, double PositionY);
+    private record MoodOption(string Emoji, string Name);
+
+    private List<MoodOption> moodOptions = new()
+    {
+        new("😸", "Happy"),
+        new("😿", "Sad"),
+        new("😾", "Angry"),
+        new("😴", "Sleepy"),
+        new("🤩", "Starry"),
+        new("😳", "Flustered"),
+        new("😍", "In Love"),
+        new("🙄", "Sassy")
+    };
+
+    private void PlantCat(MouseEventArgs e)
+    {
+        // Calculate rough percentage coordinates based on canvas click
+        double percentX = (e.OffsetX / 1440.0) * 100;
+        double percentY = (e.OffsetY / 804.0) * 100;
+
+        plantedCats.Add(new CatPlant(selectedEmoji, percentX, percentY));
+    }
+}

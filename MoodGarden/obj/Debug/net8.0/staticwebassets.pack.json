@@ -1,0 +1,41 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\L23Y16W30\\MoodGarden\\MoodGarden\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\MoodGarden.bundle.scp.css",
+      "PackagePath": "staticwebassets\\MoodGarden.bundle.scp.css"
+    },
+    {
+      "Id": "C:\\Users\\L23Y16W30\\MoodGarden\\MoodGarden\\wwwroot\\app.css",
+      "PackagePath": "staticwebassets\\app.css"
+    },
+    {
+      "Id": "C:\\Users\\L23Y16W30\\MoodGarden\\MoodGarden\\wwwroot\\bootstrap\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css"
+    },
+    {
+      "Id": "C:\\Users\\L23Y16W30\\MoodGarden\\MoodGarden\\wwwroot\\bootstrap\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\L23Y16W30\\MoodGarden\\MoodGarden\\wwwroot\\favicon.png",
+      "PackagePath": "staticwebassets\\favicon.png"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.MoodGarden.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.MoodGarden.props",
+      "PackagePath": "build\\MoodGarden.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.MoodGarden.props",
+      "PackagePath": "buildMultiTargeting\\MoodGarden.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.MoodGarden.props",
+      "PackagePath": "buildTransitive\\MoodGarden.props"
+    }
+  ],
+  "ElementsToRemove": []
+}
