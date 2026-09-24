@@ -1,80 +1,63 @@
 @page "/stats"
 @rendermode InteractiveWebAssembly
 
-<div class="app-container">
-    <!-- Header -->
-    <header class="app-header">
-        <div class="logo">
-            <div class="logo-badge">🌱</div>
-            <span class="logo-title">Cat Mood Garden</span>
+<div class="flex flex-col gap-8 h-full">
+    <div class="flex justify-between items-center w-full">
+        <div class="flex flex-col gap-1.5">
+            <h2 class="font-display font-extrabold text-[32px] leading-[38px] text-brand-dark m-0">Global Cat Vibe Check</h2>
+            <p class="text-[16px] leading-[21px] text-brand-gray m-0">See how other gardeners around the globe are blooming today.</p>
         </div>
-        <nav class="nav-links">
-            <NavLink href="" class="nav-item">🏡 My Garden</NavLink>
-            <NavLink href="my-garden" class="nav-item">📖 My Diary</NavLink>
-            <NavLink href="stats" class="nav-item active">📈 Vibe Stats</NavLink>
-        </nav>
-    </header>
+        <a href="" class="flex items-center px-[18px] py-[10px] gap-2 bg-white border-2 border-brand-dark rounded-full font-bold text-[14px] text-brand-dark no-underline transition-colors duration-200 hover:bg-brand-green">
+            <span>←</span> Back to Garden
+        </a>
+    </div>
 
-    <!-- Main Content -->
-    <main class="content-body">
-        <div class="title-row">
-            <div class="title-block">
-                <h2>Global Cat Vibe Check</h2>
-                <p>See how other gardeners around the globe are blooming today.</p>
+    <div class="flex flex-col p-8 gap-6 bg-white border-[3px] border-brand-dark shadow-[0_8px_16px_rgba(30,30,30,0.08)] rounded-[24px] w-full">
+        <h3 class="font-display font-bold text-[20px] leading-[24px] text-brand-dark m-0">Current Moods (Last 24 Hours)</h3>
+
+        <div class="flex gap-4 h-[320px] w-full">
+            <!-- Y Axis -->
+            <div class="flex flex-col justify-between items-end w-8 h-[280px] font-semibold text-[12px] text-brand-gray">
+                <span>100%</span>
+                <span>75%</span>
+                <span>50%</span>
+                <span>25%</span>
+                <span>0%</span>
             </div>
-            <a href="" class="back-btn">
-                <span>←</span> Back to Garden
-            </a>
-        </div>
 
-        <div class="chart-card">
-            <h3 class="chart-title">Current Moods (Last 24 Hours)</h3>
+            <!-- Plot Area -->
+            <div class="flex flex-col gap-3 flex-grow relative">
+                <div class="relative w-full h-[280px]">
+                    <div class="absolute left-0 right-0 h-0 border-t border-brand-gray-light top-0"></div>
+                    <div class="absolute left-0 right-0 h-0 border-t border-brand-gray-light top-[25%]"></div>
+                    <div class="absolute left-0 right-0 h-0 border-t border-brand-gray-light top-[50%]"></div>
+                    <div class="absolute left-0 right-0 h-0 border-t border-brand-gray-light top-[75%]"></div>
+                    <div class="absolute left-0 right-0 h-0 border-t-2 border-brand-dark top-[100%]"></div>
 
-            <div class="chart-frame">
-                <!-- Y Axis -->
-                <div class="y-axis">
-                    <span>100%</span>
-                    <span>75%</span>
-                    <span>50%</span>
-                    <span>25%</span>
-                    <span>0%</span>
-                </div>
-
-                <!-- Plot Area -->
-                <div class="plot-column">
-                    <div class="plot-area">
-                        <!-- Horizontal Gridlines -->
-                        <div class="grid-line" style="top: 0%;"></div>
-                        <div class="grid-line" style="top: 25%;"></div>
-                        <div class="grid-line" style="top: 50%;"></div>
-                        <div class="grid-line" style="top: 75%;"></div>
-                        <div class="grid-line base" style="top: 100%;"></div>
-
-                        <!-- Bar Columns -->
-                        <div class="bars-container">
-                            @foreach (var mood in globalMoods)
-                            {
-                                <div class="bar-column">
-                                    <span class="bar-percentage">@(mood.Percentage)%</span>
-                                    <div class="bar-shape" style="height: @(mood.Percentage * 2.8)px;"></div>
-                                    <span class="bar-emoji">@mood.Emoji</span>
-                                </div>
-                            }
-                        </div>
+                    <!-- Bar Columns -->
+                    <div class="absolute inset-0 flex justify-between items-end px-[40px]">
+                        @foreach (var mood in globalMoods)
+                        {
+                            <div class="flex flex-col items-center gap-2 w-[44px]">
+                                <span class="font-bold text-[12px] text-brand-dark">@(mood.Percentage)%</span>
+                                <div class="w-[44px] bg-brand-pink border-[2.5px] border-brand-dark border-b-0 rounded-t-[10px] transition-all duration-400 ease-in-out" style="height: @(mood.Percentage * 2.8)px;"></div>
+                                <span class="text-[20px] mt-1">@mood.Emoji</span>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
-
-            <!-- Legend -->
-            <div class="chart-legend">
-                <div class="legend-item">
-                    <div class="legend-box"></div>
-                    <span>Planted Moods</span>
-                </div>
-                <span class="legend-stats">Total active plants: 12,482 today</span>
-            </div>
         </div>
-    </main>
+
+        <!-- Legend -->
+        <div class="flex justify-center items-center pt-3 gap-6">
+            <div class="flex items-center gap-2 font-semibold text-[13px] text-brand-dark">
+                <div class="w-4 h-4 bg-brand-pink border-[1.5px] border-brand-dark rounded"></div>
+                <span>Planted Moods</span>
+            </div>
+            <span class="text-[13px] text-brand-gray">Total active plants: 12,482 today</span>
+        </div>
+    </div>
 </div>
 
 @code {
@@ -82,13 +65,7 @@
 
     private List<MoodStat> globalMoods = new()
     {
-        new("😸", 32),
-        new("😿", 8),
-        new("😾", 12),
-        new("😴", 48),
-        new("🤩", 24),
-        new("😳", 15),
-        new("😍", 58),
-        new("🙄", 18)
+        new("😸", 32), new("😿", 8), new("😾", 12), new("😴", 48),
+        new("🤩", 24), new("😳", 15), new("😍", 58), new("🙄", 18)
     };
 }

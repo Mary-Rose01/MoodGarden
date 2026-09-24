@@ -1,62 +1,50 @@
 @page "/my-garden"
 @rendermode InteractiveWebAssembly
 
-<div class="app-container">
-    <!-- Header -->
-    <header class="app-header">
-        <div class="logo">
-            <div class="logo-badge">🌱</div>
-            <span class="logo-title">Cat Mood Garden</span>
+<div class="flex flex-col gap-8 h-full">
+    <div class="flex justify-between items-center w-full">
+        <div class="flex flex-col gap-1.5">
+            <h2 class="font-display font-extrabold text-[32px] leading-[38px] text-brand-dark m-0">My Cat Diary</h2>
+            <p class="text-[16px] leading-[21px] text-brand-gray m-0">A chronological memory lane of your planted feelings.</p>
         </div>
-        <nav class="nav-links">
-            <NavLink href="" class="nav-item">🏡 My Garden</NavLink>
-            <NavLink href="my-garden" class="nav-item active">📖 My Diary</NavLink>
-            <NavLink href="stats" class="nav-item">📈 Vibe Stats</NavLink>
-        </nav>
-    </header>
+        <a href="" class="flex items-center px-[18px] py-[10px] gap-2 bg-white border-2 border-brand-dark rounded-full font-bold text-[14px] text-brand-dark no-underline transition-colors duration-200 hover:bg-brand-green">
+            <span>←</span> Back to Garden
+        </a>
+    </div>
 
-    <!-- Main Diary Content -->
-    <main class="content-body">
-        <div class="title-row">
-            <div class="title-block">
-                <h2>My Cat Diary</h2>
-                <p>A chronological memory lane of your planted feelings.</p>
+    <div class="flex flex-col gap-6 w-full">
+        @if (!diaryEntries.Any())
+        {
+            <div class="flex flex-col p-6 gap-4 bg-white border-[3px] border-brand-dark shadow-[0_8px_16px_rgba(30,30,30,0.08)] rounded-[24px]">
+                <p class="text-[14px] leading-[140%] text-brand-dark m-0">No diary entries recorded yet! Plant a cat mood in the garden to start your log.</p>
             </div>
-            <a href="" class="back-btn">
-                <span>←</span> Back to Garden
-            </a>
-        </div>
-
-        <div class="diary-grid">
-            @if (!diaryEntries.Any())
+        }
+        else
+        {
+            @foreach (var rowChunk in diaryEntries.Chunk(3))
             {
-                <div class="diary-card">
-                    <p class="note-text">No diary entries recorded yet! Plant a cat mood in the garden to start your log.</p>
-                </div>
-            }
-            else
-            {
-                @foreach (var rowChunk in diaryEntries.Chunk(3))
-                {
-                    <div class="grid-row">
-                        @foreach (var entry in rowChunk)
-                        {
-                            <div class="diary-card">
-                                <div class="card-header">
-                                    <div class="emoji-ring">@entry.Emoji</div>
-                                    <div class="badge">@entry.MoodName</div>
+                <div class="flex gap-6 w-full">
+                    @foreach (var entry in rowChunk)
+                    {
+                        <div class="flex flex-col p-6 gap-4 flex-1 bg-white border-[3px] border-brand-dark shadow-[0_8px_16px_rgba(30,30,30,0.08)] rounded-[24px]">
+                            <div class="flex justify-between items-center w-full">
+                                <div class="flex justify-center items-center w-[56px] h-[56px] bg-brand-light border-2 border-brand-dark rounded-full text-[28px]">
+                                    @entry.Emoji
                                 </div>
-                                <div class="card-body">
-                                    <span class="timestamp">@entry.TimeAgo</span>
-                                    <p class="note-text">@entry.Note</p>
+                                <div class="flex items-center justify-center px-3 py-1 bg-brand-pink border-[1.5px] border-brand-dark rounded-full font-bold text-[12px] text-brand-dark">
+                                    @entry.MoodName
                                 </div>
                             </div>
-                        }
-                    </div>
-                }
+                            <div class="flex flex-col gap-1.5">
+                                <span class="font-semibold text-[12px] text-brand-gray">@entry.TimeAgo</span>
+                                <p class="text-[14px] leading-[140%] text-brand-dark m-0">@entry.Note</p>
+                            </div>
+                        </div>
+                    }
+                </div>
             }
-        </div>
-    </main>
+        }
+    </div>
 </div>
 
 @code {

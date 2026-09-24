@@ -1,53 +1,42 @@
 ﻿@page "/"
 @rendermode InteractiveWebAssembly
 
-<div class="app-container">
-    <!-- Header -->
-    <header class="app-header">
-        <div class="logo">
-            <div class="logo-badge">🌱</div>
-            <span class="logo-title">Cat Mood Garden</span>
-        </div>
-        <nav class="nav-links">
-            <NavLink href="" class="nav-item active">🏡 My Garden</NavLink>
-            <NavLink href="my-garden" class="nav-item">📖 My Diary</NavLink>
-            <NavLink href="stats" class="nav-item">📈 Vibe Stats</NavLink>
-        </nav>
-    </header>
-
+<div class="flex flex-col h-full -m-10">
     <!-- Canvas -->
-    <div class="garden-canvas" @onclick="PlantCat">
-        <div class="cloud cloud-1"></div>
-        <div class="cloud cloud-2"></div>
-        <div class="cloud cloud-3"></div>
+    <div class="relative flex-grow bg-gradient-to-br from-brand-grad-start to-brand-grad-end border-b-[3px] border-brand-dark overflow-hidden cursor-pointer" @onclick="PlantCat">
+        <div class="absolute bg-white/80 rounded-full w-[132px] h-[53px] left-[100px] top-[40px]"></div>
+        <div class="absolute bg-white/80 rounded-full w-[121px] h-[48px] left-[520px] top-[30px]"></div>
+        <div class="absolute bg-white/80 rounded-full w-[99px] h-[40px] left-[950px] top-[60px]"></div>
         
-        <div class="hill-back"></div>
-        <div class="hill-front"></div>
+        <div class="absolute w-[900px] h-[400px] -left-[200px] top-[280px] bg-brand-green-dark border-[3px] border-brand-dark rounded-full"></div>
+        <div class="absolute w-[1000px] h-[450px] left-[450px] top-[250px] bg-brand-green border-[3px] border-brand-dark rounded-full"></div>
 
-        <div class="instruction-callout">
+        <div class="absolute left-1/2 -translate-x-1/2 top-[20px] flex items-center gap-2 px-6 py-3 bg-white border-[2.5px] border-brand-dark shadow-[0_8px_16px_rgba(30,30,30,0.08)] rounded-[16px] font-bold text-[14px] text-brand-dark z-20">
             💡 Select your mood cat and tap anywhere in the garden to plant!
         </div>
 
         @foreach (var cat in plantedCats)
         {
-            <div class="planted-cat" style="left: @(cat.PositionX)%; top: @(cat.PositionY)%;">
-                <div class="cat-bubble">@cat.Emoji</div>
-                <div class="soil"></div>
+            <div class="absolute flex flex-col items-center gap-[2px] -translate-x-1/2 -translate-y-full animate-[popIn_0.3s_cubic-bezier(0.175,0.885,0.32,1.275)]" style="left: @(cat.PositionX)%; top: @(cat.PositionY)%;">
+                <div class="flex justify-center items-center w-[56px] h-[56px] bg-white border-[3px] border-brand-dark shadow-[0_8px_16px_rgba(30,30,30,0.08)] rounded-[28px] text-[28px]">
+                    @cat.Emoji
+                </div>
+                <div class="w-[24px] h-[6px] bg-brand-brown rounded-full"></div>
             </div>
         }
     </div>
 
     <!-- Bottom Tray -->
-    <div class="bottom-picker-tray">
-        <span class="picker-title">How are you feeling right now? Pick a mood:</span>
-        <div class="emoji-buttons">
+    <div class="flex flex-col items-center py-6 px-8 gap-4 bg-white h-[140px]">
+        <span class="font-display font-bold text-[18px] text-brand-dark">How are you feeling right now? Pick a mood:</span>
+        <div class="flex gap-4">
             @foreach (var mood in moodOptions)
             {
-                <button class="emoji-btn @(selectedEmoji == mood.Emoji ? "active" : "")" 
+                <button class="flex flex-col items-center justify-center w-[72px] h-[76px] bg-white border-[2.5px] border-brand-dark rounded-[16px] cursor-pointer transition-all duration-200 @(selectedEmoji == mood.Emoji ? "bg-brand-pink shadow-[0_8px_16px_rgba(30,30,30,0.08)]" : "")" 
                         @onclick="() => selectedEmoji = mood.Emoji" 
                         @onclick:stopPropagation="true">
-                    <span class="emoji">@mood.Emoji</span>
-                    <span class="label">@mood.Name</span>
+                    <span class="text-[28px]">@mood.Emoji</span>
+                    <span class="text-[11px] font-bold text-brand-dark mt-1">@mood.Name</span>
                 </button>
             }
         </div>
@@ -63,22 +52,14 @@
 
     private List<MoodOption> moodOptions = new()
     {
-        new("😸", "Happy"),
-        new("😿", "Sad"),
-        new("😾", "Angry"),
-        new("😴", "Sleepy"),
-        new("🤩", "Starry"),
-        new("😳", "Flustered"),
-        new("😍", "In Love"),
-        new("🙄", "Sassy")
+        new("😸", "Happy"), new("😿", "Sad"), new("😾", "Angry"), new("😴", "Sleepy"),
+        new("🤩", "Starry"), new("😳", "Flustered"), new("😍", "In Love"), new("🙄", "Sassy")
     };
 
     private void PlantCat(MouseEventArgs e)
     {
-        // Calculate rough percentage coordinates based on canvas click
         double percentX = (e.OffsetX / 1440.0) * 100;
         double percentY = (e.OffsetY / 804.0) * 100;
-
         plantedCats.Add(new CatPlant(selectedEmoji, percentX, percentY));
     }
 }
