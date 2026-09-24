@@ -5,7 +5,7 @@
   --font-sans: 'DM Sans', sans-serif;
   --font-display: 'Bricolage Grotesque', sans-serif;
 
-  /* Custom Colors */
+  /* Core brand colors */
   --color-brand-light: #EAF4F4;
   --color-brand-dark: #1E1E1E;
   --color-brand-pink: #F7A8B8;
@@ -17,13 +17,65 @@
   --color-brand-grad-start: #D8ECEF;
   --color-brand-grad-end: #C6E4E6;
 
+  /* Mood palette (Happy=yellow, Sad=blue, Angry=coral, Sleepy=lilac, Starry=peach, Flustered=pink, In Love=rose, Sassy=green) */
+  --color-brand-yellow: #FFE08A;
+  --color-brand-blue: #A9D6E5;
+  --color-brand-coral: #F4978E;
+  --color-brand-lilac: #D5C6F0;
+  --color-brand-peach: #FFCBA4;
+  --color-brand-rose: #F28DB0;
+
+  /* Time-of-day skies */
+  --color-brand-dusk-start: #FFE3CF;
+  --color-brand-dusk-end: #F9B7C4;
+  --color-brand-night-start: #34456B;
+  --color-brand-night-end: #1F2A48;
+
+  /* Hard "pop" shadows -> shadow-pop-sm / shadow-pop / shadow-pop-lg */
+  --shadow-pop-sm: 2px 2px 0 0 #1E1E1E;
+  --shadow-pop: 4px 4px 0 0 #1E1E1E;
+  --shadow-pop-lg: 6px 6px 0 0 #1E1E1E;
+
   /* Animations */
   --animate-float-slow: float 25s linear infinite;
   --animate-float-med: float 18s linear infinite;
   --animate-float-fast: float 12s linear infinite;
+  --animate-pop-in: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+  --animate-bob: bob 3s ease-in-out infinite;
+  --animate-rise: rise 0.45s ease-out both;
 
   @keyframes float {
     0% { transform: translateX(-150px); }
     100% { transform: translateX(100vw); }
+  }
+  @keyframes pop-in {
+    0% { transform: scale(0) translateY(20px); opacity: 0; }
+    100% { transform: scale(1) translateY(0); opacity: 1; }
+  }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+  @keyframes rise {
+    0% { transform: translateY(12px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    background-color: #DCEBEB;
+    background-image: radial-gradient(rgb(30 30 30 / 0.12) 1.5px, transparent 1.5px);
+    background-size: 22px 22px;
+  }
+  button { cursor: pointer; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

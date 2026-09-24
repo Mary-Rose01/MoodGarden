@@ -1,17 +1,16 @@
 ﻿<header class="flex flex-col md:flex-row justify-between items-center px-6 md:px-10 py-4 w-full bg-white border-b-[3px] border-brand-dark gap-4 md:gap-0">
     <div class="flex items-center gap-3">
-        <div class="flex justify-center items-center w-10 h-10 bg-brand-pink border-2 border-brand-dark rounded-full shadow-[2px_2px_0px_0px_#1E1E1E]">🌱</div>
-        <span class="font-display font-extrabold text-[24px] text-brand-dark whitespace-nowrap">Cat Mood Garden</span>
+        <div class="flex justify-center items-center w-10 h-10 bg-brand-pink border-2 border-brand-dark rounded-full shadow-pop-sm">🌱</div>
+        <span class="font-display font-extrabold text-2xl text-brand-dark whitespace-nowrap">Cat Mood Garden</span>
     </div>
     <nav class="flex flex-wrap justify-center gap-2 md:gap-4">
-        <NavLink href="" Match="NavLinkMatch.All" class="flex items-center px-4 md:px-5 py-2 rounded-full font-bold text-sm text-brand-dark no-underline border-2 border-transparent transition-all hover:bg-brand-light [&.active]:bg-brand-green [&.active]:border-brand-dark [&.active]:shadow-[2px_2px_0px_0px_#1E1E1E]">
-            🏡 My Garden
-        </NavLink>
-        <NavLink href="my-garden" class="flex items-center px-4 md:px-5 py-2 rounded-full font-bold text-sm text-brand-dark no-underline border-2 border-transparent transition-all hover:bg-brand-light [&.active]:bg-brand-green [&.active]:border-brand-dark [&.active]:shadow-[2px_2px_0px_0px_#1E1E1E]">
-            📖 My Diary
-        </NavLink>
-        <NavLink href="stats" class="flex items-center px-4 md:px-5 py-2 rounded-full font-bold text-sm text-brand-dark no-underline border-2 border-transparent transition-all hover:bg-brand-light [&.active]:bg-brand-green [&.active]:border-brand-dark [&.active]:shadow-[2px_2px_0px_0px_#1E1E1E]">
-            📈 Vibe Stats
-        </NavLink>
+        <NavLink href="" Match="NavLinkMatch.All" class="@LinkClass">🏡 My Garden</NavLink>
+        <NavLink href="diary" class="@LinkClass">📖 My Diary</NavLink>
+        <NavLink href="stats" class="@LinkClass">📈 Vibe Stats</NavLink>
     </nav>
 </header>
+
+@code {
+    private const string LinkClass =
+        "flex items-center px-4 md:px-5 py-2 rounded-full font-bold text-sm text-brand-dark no-underline border-2 border-transparent transition-all hover:bg-brand-light [&.active]:bg-brand-green [&.active]:border-brand-dark [&.active]:shadow-pop-sm";
+}

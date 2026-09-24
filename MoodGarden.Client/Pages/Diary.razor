@@ -1,0 +1,67 @@
+@page "/diary"
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+@inherits GardenPageBase
+
+<div class="flex flex-col gap-6 h-full">
+    <div class="flex flex-col gap-1.5">
+        <h2 class="font-display font-extrabold text-[28px] md:text-[32px] leading-tight text-brand-dark m-0">My Cat Diary</h2>
+        <p class="text-sm md:text-base text-brand-gray m-0">A chronological memory lane of your planted feelings.</p>
+    </div>
+
+    @if (Garden.Plantings.Count == 0)
+    {
+        <div class="flex flex-col items-center justify-center flex-grow p-10 bg-white border-[3px] border-brand-dark shadow-pop-lg rounded-3xl text-center mt-4">
+            <div class="text-[80px] mb-4 animate-bounce">🛌🐈</div>
+            <h3 class="font-display font-bold text-2xl text-brand-dark mb-2">It's awfully quiet here...</h3>
+            <p class="text-base text-brand-gray max-w-md mb-6">You haven't recorded any diary entries yet! Head back to the garden and plant a cat to start your emotional log.</p>
+            <a href="" class="px-6 py-3 bg-brand-green border-2 border-brand-dark rounded-full font-bold text-sm text-brand-dark no-underline shadow-pop-sm transition-all hover:-translate-y-0.5 hover:shadow-pop">🌱 Plant your first cat</a>
+        </div>
+    }
+    else
+    {
+        <div class="flex flex-wrap gap-2" role="group" aria-label="Filter by mood">
+            <button type="button" class="@ChipClass(null)" @onclick="() => filter = null">All · @Garden.Plantings.Count</button>
+            @foreach (var mood in GardenState.Moods.Where(m => Garden.Plantings.Any(p => p.MoodName == m.Name)))
+            {
+                <button type="button" class="@ChipClass(mood.Name)" @onclick="() => filter = mood.Name">@mood.Emoji @mood.Name</button>
+            }
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+            @foreach (var (entry, i) in Entries.Select((e, i) => (e, i)))
+            {
+                var mood = GardenState.Find(entry.MoodName);
+                <div class="flex flex-col p-6 gap-4 bg-white border-[3px] border-brand-dark shadow-pop rounded-3xl transition-transform hover:-translate-y-1 animate-rise"
+                     style="animation-delay:@(Math.Min(i, 12) * 50)ms;">
+                    <div class="flex justify-between items-center w-full">
+                        <div class="flex justify-center items-center w-14 h-14 border-[2.5px] border-brand-dark rounded-full text-[28px] @mood.Bg">@entry.Emoji</div>
+                        <div class="flex items-center justify-center px-4 py-1.5 border-2 border-brand-dark rounded-full font-bold text-xs text-brand-dark shadow-pop-sm @mood.Bg">@entry.MoodName</div>
+                    </div>
+                    <div class="flex flex-col gap-2 mt-2">
+                        <span class="font-bold text-[11px] uppercase tracking-wider text-brand-gray">@GardenState.TimeAgo(entry.At)</span>
+                        @if (string.IsNullOrWhiteSpace(entry.Note))
+                        {
+                            <p class="text-[15px] leading-relaxed text-brand-gray italic m-0">No note, just vibes 🌿</p>
+                        }
+                        else
+                        {
+                            <p class="text-[15px] leading-relaxed text-brand-dark font-medium m-0">@entry.Note</p>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private string? filter;
+
+    private IEnumerable<Planting> Entries => Garden.Plantings
+        .OrderByDescending(p => p.At)
+        .Where(p => filter is null || p.MoodName == filter);
+
+    private string ChipClass(string? name) =>
+        "px-4 py-1.5 border-2 border-brand-dark rounded-full font-bold text-sm transition-all " +
+        (filter == name ? "bg-brand-dark text-white shadow-pop-sm" : "bg-white text-brand-dark hover:bg-brand-light");
+}

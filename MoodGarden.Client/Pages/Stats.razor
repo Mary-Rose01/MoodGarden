@@ -1,0 +1,115 @@
+@page "/stats"
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+@inherits GardenPageBase
+
+@{
+    var data = showMine ? Mine : Global;
+    var axisMax = Math.Max(20, (int)Math.Ceiling(data.Max(d => d.Value) / 20.0) * 20);
+    var globalTop = Global.MaxBy(d => d.Value);
+    var myCount = Garden.Recent.Count;
+}
+
+<div class="flex flex-col gap-6 h-full">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center w-full gap-4">
+        <div class="flex flex-col gap-1.5">
+            <h2 class="font-display font-extrabold text-[28px] md:text-[32px] leading-tight text-brand-dark m-0">Global Cat Vibe Check</h2>
+            <p class="text-sm md:text-base text-brand-gray m-0">See how other gardeners around the globe are blooming today.</p>
+        </div>
+        <a href="" class="flex items-center px-[18px] py-2.5 gap-2 bg-white border-2 border-brand-dark rounded-full font-bold text-sm text-brand-dark no-underline transition-colors duration-200 hover:bg-brand-green">
+            <span>←</span> Back to Garden
+        </a>
+    </div>
+
+    <!-- Summary cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="flex flex-col gap-1 p-5 bg-brand-green border-[3px] border-brand-dark shadow-pop rounded-2xl">
+            <span class="font-bold text-xs uppercase tracking-wider text-brand-dark/70">Active plants today</span>
+            <span class="font-display font-extrabold text-3xl text-brand-dark">12,482</span>
+        </div>
+        <div class="flex flex-col gap-1 p-5 bg-brand-pink border-[3px] border-brand-dark shadow-pop rounded-2xl">
+            <span class="font-bold text-xs uppercase tracking-wider text-brand-dark/70">Your plants (24h)</span>
+            <span class="font-display font-extrabold text-3xl text-brand-dark">@myCount</span>
+        </div>
+        <div class="flex flex-col gap-1 p-5 bg-brand-yellow border-[3px] border-brand-dark shadow-pop rounded-2xl">
+            <span class="font-bold text-xs uppercase tracking-wider text-brand-dark/70">Top global mood</span>
+            <span class="font-display font-extrabold text-3xl text-brand-dark">@globalTop.Mood.Emoji @globalTop.Mood.Name</span>
+        </div>
+    </div>
+
+    <!-- Chart card -->
+    <div class="flex flex-col p-6 md:p-8 gap-6 bg-white border-[3px] border-brand-dark shadow-pop rounded-3xl w-full">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <h3 class="font-display font-bold text-xl text-brand-dark m-0">Current Moods (Last 24 Hours)</h3>
+            <div class="inline-flex p-1 bg-brand-light border-[2.5px] border-brand-dark rounded-full" role="group">
+                <button type="button" class="px-4 py-1.5 rounded-full font-bold text-sm transition-colors @(!showMine ? "bg-brand-dark text-white" : "text-brand-dark hover:bg-white")" @onclick="() => showMine = false">🌍 Global</button>
+                <button type="button" class="px-4 py-1.5 rounded-full font-bold text-sm transition-colors @(showMine ? "bg-brand-dark text-white" : "text-brand-dark hover:bg-white")" @onclick="() => showMine = true">🌱 Mine</button>
+            </div>
+        </div>
+
+        @if (showMine && myCount == 0)
+        {
+            <p class="text-sm text-brand-gray m-0">You haven't planted anything in the last 24 hours. Head to the garden and plant a mood to see your own chart.</p>
+        }
+
+        <div class="flex gap-3 w-full">
+            <!-- Y axis -->
+            <div class="relative w-10 h-[280px] shrink-0">
+                @for (var i = 0; i <= 4; i++)
+                {
+                    <span class="absolute right-0 -translate-y-1/2 font-semibold text-xs text-brand-gray" style="bottom:@(i * 25)%;">@(axisMax * i / 4)%</span>
+                }
+            </div>
+
+            <div class="flex flex-col gap-2 flex-grow min-w-0">
+                <!-- Plot -->
+                <div class="relative h-[280px] border-l-2 border-b-2 border-brand-dark">
+                    @for (var i = 1; i <= 4; i++)
+                    {
+                        <div class="absolute inset-x-0 border-t border-dashed border-brand-gray-light" style="bottom:@(i * 25)%;"></div>
+                    }
+                    <div class="absolute inset-0 flex items-end justify-around gap-2 px-2">
+                        @foreach (var d in data)
+                        {
+                            var h = (int)Math.Round(100.0 * d.Value / axisMax);
+                            <div class="relative h-full flex-1 max-w-[56px]" title="@d.Mood.Name: @d.Value%">
+                                <span class="absolute left-1/2 -translate-x-1/2 font-bold text-xs text-brand-dark" style="bottom:calc(@(h)% + 6px);">@d.Value%</span>
+                                <div class="absolute bottom-0 inset-x-0 border-[2.5px] border-brand-dark border-b-0 rounded-t-[10px] transition-[height] duration-500 ease-out hover:brightness-95 @d.Mood.Bg" style="height:@(h)%;"></div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <!-- Emoji labels -->
+                <div class="flex justify-around gap-2 px-2">
+                    @foreach (var d in data)
+                    {
+                        <div class="flex-1 max-w-[56px] flex flex-col items-center">
+                            <span class="text-xl">@d.Mood.Emoji</span>
+                            <span class="hidden md:block text-[10px] font-bold text-brand-gray">@d.Mood.Name</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private static readonly int[] globalValues = { 32, 8, 12, 48, 24, 15, 58, 18 }; // same order as GardenState.Moods
+
+    private bool showMine;
+
+    private List<(Mood Mood, int Value)> Global =>
+        GardenState.Moods.Select((m, i) => (m, globalValues[i])).ToList();
+
+    private List<(Mood Mood, int Value)> Mine
+    {
+        get
+        {
+            var recent = Garden.Recent;
+            var total = Math.Max(recent.Count, 1);
+            return GardenState.Moods
+                .Select(m => (m, (int)Math.Round(100.0 * recent.Count(p => p.MoodName == m.Name) / total)))
+                .ToList();
+        }
+    }
+}

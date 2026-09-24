@@ -1,67 +1,118 @@
 ﻿@page "/"
-@rendermode InteractiveWebAssembly
+@rendermode @(new InteractiveWebAssemblyRenderMode(prerender: false))
+@inherits GardenPageBase
+@inject IJSRuntime JS
+
+@{ var recent = Garden.Recent; }
 
 <div class="flex flex-col h-full -m-6 md:-m-10">
     <!-- Canvas -->
-    <div class="relative flex-grow bg-gradient-to-br from-brand-grad-start to-brand-grad-end border-b-[3px] border-brand-dark overflow-hidden cursor-pointer" @onclick="PlantCat">
-        <!-- Animated Clouds -->
-        <div class="absolute bg-white/90 border-2 border-brand-dark rounded-full w-[132px] h-[53px] top-[10%] animate-float-slow -left-[150px]"></div>
-        <div class="absolute bg-white/90 border-2 border-brand-dark rounded-full w-[121px] h-[48px] top-[30%] animate-float-fast -left-[150px]"></div>
-        <div class="absolute bg-white/90 border-2 border-brand-dark rounded-full w-[99px] h-[40px] top-[15%] animate-float-med -left-[150px]" style="animation-delay: 5s;"></div>
-        
-        <!-- Hills -->
-        <div class="absolute w-[150%] md:w-[900px] h-[300px] md:h-[400px] -left-[10%] md:-left-[200px] -bottom-[100px] md:top-[280px] bg-brand-green-dark border-[3px] border-brand-dark rounded-[100%] md:rounded-full"></div>
-        <div class="absolute w-[150%] md:w-[1000px] h-[350px] md:h-[450px] -right-[20%] md:left-[450px] -bottom-[50px] md:top-[250px] bg-brand-green border-[3px] border-brand-dark rounded-[100%] md:rounded-full"></div>
+    <div @ref="canvas" @onclick="PlantCat"
+         class="relative flex-grow min-h-[340px] bg-linear-to-br @SkyClass border-b-[3px] border-brand-dark overflow-hidden cursor-pointer">
 
-        <div class="absolute left-1/2 -translate-x-1/2 top-[20px] flex items-center gap-2 px-6 py-3 bg-white border-[2.5px] border-brand-dark shadow-[4px_4px_0px_0px_#1E1E1E] rounded-[16px] font-bold text-[14px] text-brand-dark z-20 text-center w-[90%] md:w-auto">
+        <!-- Sun / Moon -->
+        <div class="pointer-events-none select-none absolute top-28 md:top-6 right-6 text-[44px] animate-bob">@(IsNight ? "🌙" : "☀️")</div>
+
+        <!-- Clouds -->
+        <div class="pointer-events-none absolute bg-white/90 border-2 border-brand-dark rounded-full w-[132px] h-[53px] top-[10%] animate-float-slow -left-[150px] @CloudFade"></div>
+        <div class="pointer-events-none absolute bg-white/90 border-2 border-brand-dark rounded-full w-[121px] h-[48px] top-[30%] animate-float-fast -left-[150px] @CloudFade"></div>
+        <div class="pointer-events-none absolute bg-white/90 border-2 border-brand-dark rounded-full w-[99px] h-[40px] top-[15%] animate-float-med -left-[150px] @CloudFade" style="animation-delay: 5s;"></div>
+
+        <!-- Hills -->
+        <div class="pointer-events-none absolute w-[150%] md:w-[900px] h-[300px] md:h-[400px] -left-[10%] md:-left-[200px] -bottom-[100px] md:top-[280px] bg-brand-green-dark border-[3px] border-brand-dark rounded-[100%] md:rounded-full"></div>
+        <div class="pointer-events-none absolute w-[150%] md:w-[1000px] h-[350px] md:h-[450px] -right-[20%] md:left-[450px] -bottom-[50px] md:top-[250px] bg-brand-green border-[3px] border-brand-dark rounded-[100%] md:rounded-full"></div>
+
+        <!-- Hint (fades after first planting) -->
+        <div class="pointer-events-none absolute left-1/2 -translate-x-1/2 top-5 z-[2000] flex items-center justify-center gap-2 px-6 py-3 bg-white border-[2.5px] border-brand-dark shadow-pop rounded-2xl font-bold text-sm text-brand-dark text-center w-[90%] md:w-auto transition-opacity duration-500 @(recent.Any() ? "opacity-0" : "opacity-100")">
             💡 Tap anywhere in the garden to plant your mood!
         </div>
 
-        @foreach (var cat in plantedCats)
+        <!-- Counter -->
+        <div class="pointer-events-none absolute bottom-4 left-4 z-[2000] px-4 py-2 bg-white border-2 border-brand-dark rounded-full shadow-pop-sm font-bold text-xs text-brand-dark">
+            🌱 @recent.Count planted in the last 24h
+        </div>
+
+        <!-- Planted cats -->
+        @foreach (var cat in recent)
         {
-            <div class="absolute flex flex-col items-center gap-[2px] -translate-x-1/2 -translate-y-full animate-[popIn_0.3s_cubic-bezier(0.175,0.885,0.32,1.275)]" style="left: @(cat.PositionX)%; top: @(cat.PositionY)%;">
-                <div class="flex justify-center items-center w-[56px] h-[56px] bg-white border-[3px] border-brand-dark shadow-[4px_4px_0px_0px_#1E1E1E] rounded-[28px] text-[28px]">
-                    @cat.Emoji
+            var mood = GardenState.Find(cat.MoodName);
+            <div class="pointer-events-none absolute -translate-x-1/2 -translate-y-full origin-bottom"
+                 style="left:@(GardenState.Css(cat.X))%; top:@(GardenState.Css(cat.Y))%; z-index:@((int)(cat.Y * 10)); scale:@(GardenState.Css(0.75 + cat.Y / 100 * 0.4));">
+                <div class="flex flex-col items-center gap-0.5 animate-pop-in">
+                    <div class="animate-bob" style="animation-delay:-@(Delay(cat))ms;">
+                        <div class="flex justify-center items-center w-14 h-14 border-[3px] border-brand-dark shadow-pop rounded-full text-[28px] @mood.Bg">
+                            @cat.Emoji
+                        </div>
+                    </div>
+                    <div class="w-6 h-1.5 mt-1 bg-brand-brown border border-brand-dark rounded-full"></div>
                 </div>
-                <div class="w-[24px] h-[6px] bg-brand-brown border border-brand-dark rounded-full mt-1"></div>
             </div>
         }
     </div>
 
     <!-- Bottom Tray -->
-    <div class="flex flex-col items-center py-6 px-4 md:px-8 gap-4 bg-white md:h-[140px]">
-        <span class="font-display font-bold text-[16px] md:text-[18px] text-brand-dark">How are you feeling right now? Pick a mood:</span>
+    <div class="shrink-0 flex flex-col items-center py-5 px-4 md:px-8 gap-3 bg-white">
+        <span class="font-display font-bold text-base md:text-lg text-brand-dark">How are you feeling right now? Pick a mood:</span>
         <div class="flex flex-wrap justify-center gap-3 md:gap-4 w-full max-w-3xl">
-            @foreach (var mood in moodOptions)
+            @foreach (var mood in GardenState.Moods)
             {
-                <button class="flex flex-col items-center justify-center w-[64px] h-[68px] md:w-[72px] md:h-[76px] bg-white border-[2.5px] border-brand-dark rounded-[16px] cursor-pointer transition-all duration-100 hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_#1E1E1E] active:translate-y-1 active:shadow-[0px_0px_0px_0px_#1E1E1E] @(selectedEmoji == mood.Emoji ? "bg-brand-pink shadow-[4px_4px_0px_0px_#1E1E1E] -translate-y-1" : "")" 
-                        @onclick="() => selectedEmoji = mood.Emoji" 
-                        @onclick:stopPropagation="true">
+                var selected = selectedName == mood.Name;
+                <button type="button"
+                        aria-pressed="@(selected ? "true" : "false")"
+                        class="flex flex-col items-center justify-center w-16 h-[68px] md:w-[72px] md:h-[76px] border-[2.5px] border-brand-dark rounded-2xl transition-all duration-100 hover:-translate-y-1 hover:shadow-pop active:translate-y-0.5 active:shadow-none @(selected ? $"{mood.Bg} shadow-pop -translate-y-1" : "bg-white")"
+                        @onclick="() => selectedName = mood.Name">
                     <span class="text-[24px] md:text-[28px]">@mood.Emoji</span>
                     <span class="text-[10px] md:text-[11px] font-bold text-brand-dark mt-1">@mood.Name</span>
                 </button>
             }
         </div>
+        <input type="text" maxlength="120" @bind="note" @bind:event="oninput"
+               placeholder="Add a little note for your diary (optional)…"
+               class="w-full max-w-xl px-5 py-2.5 bg-brand-light border-[2.5px] border-brand-dark rounded-full text-sm text-brand-dark placeholder:text-brand-gray focus:outline-none focus:bg-white focus:shadow-pop-sm" />
     </div>
 </div>
 
 @code {
-    private string selectedEmoji = "😸";
-    private static List<CatPlant> plantedCats = new();
+    private ElementReference canvas;
+    private string selectedName = "Happy";
+    private string note = "";
+    private int hour = 12;
 
-    private record CatPlant(string Emoji, double PositionX, double PositionY);
-    private record MoodOption(string Emoji, string Name);
+    private record Rect(double Left, double Top, double Width, double Height);
 
-    private List<MoodOption> moodOptions = new()
+    private bool IsNight => hour is < 6 or >= 20;
+    private string CloudFade => IsNight ? "opacity-30" : "";
+    private string SkyClass => hour switch
     {
-        new("😸", "Happy"), new("😿", "Sad"), new("😾", "Angry"), new("😴", "Sleepy"),
-        new("🤩", "Starry"), new("😳", "Flustered"), new("😍", "In Love"), new("🙄", "Sassy")
+        >= 6 and < 17 => "from-brand-grad-start to-brand-grad-end",
+        >= 17 and < 20 => "from-brand-dusk-start to-brand-dusk-end",
+        _ => "from-brand-night-start to-brand-night-end"
     };
 
-    private void PlantCat(MouseEventArgs e)
+    private static int Delay(Planting p) => Math.Abs(p.Id.GetHashCode()) % 3000;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        double percentX = (e.OffsetX / 1440.0) * 100;
-        double percentY = (e.OffsetY / 804.0) * 100;
-        plantedCats.Add(new CatPlant(selectedEmoji, percentX, percentY));
+        await base.OnAfterRenderAsync(firstRender);
+        if (!firstRender) return;
+        hour = await JS.InvokeAsync<int>("garden.hour");
+        StateHasChanged();
+    }
+
+    private async Task PlantCat(MouseEventArgs e)
+    {
+        // Measure the real canvas instead of hardcoding 1440x804
+        var r = await JS.InvokeAsync<Rect>("garden.getRect", canvas);
+        if (r.Width <= 0 || r.Height <= 0) return;
+
+        var x = Math.Clamp((e.ClientX - r.Left) / r.Width * 100, 4, 96);
+        var y = Math.Clamp((e.ClientY - r.Top) / r.Height * 100, 14, 100);
+        var mood = GardenState.Find(selectedName);
+
+        await Garden.AddAsync(new Planting(
+            Guid.NewGuid(), mood.Emoji, mood.Name, x, y, DateTime.UtcNow,
+            string.IsNullOrWhiteSpace(note) ? null : note.Trim()));
+
+        note = "";
     }
 }
