@@ -2,54 +2,49 @@
 @rendermode InteractiveWebAssembly
 
 <div class="flex flex-col gap-8 h-full">
-    <div class="flex justify-between items-center w-full">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center w-full gap-4">
         <div class="flex flex-col gap-1.5">
-            <h2 class="font-display font-extrabold text-[32px] leading-[38px] text-brand-dark m-0">My Cat Diary</h2>
-            <p class="text-[16px] leading-[21px] text-brand-gray m-0">A chronological memory lane of your planted feelings.</p>
+            <h2 class="font-display font-extrabold text-[28px] md:text-[32px] leading-tight text-brand-dark m-0">My Cat Diary</h2>
+            <p class="text-[14px] md:text-[16px] text-brand-gray m-0">A chronological memory lane of your planted feelings.</p>
         </div>
-        <a href="" class="flex items-center px-[18px] py-[10px] gap-2 bg-white border-2 border-brand-dark rounded-full font-bold text-[14px] text-brand-dark no-underline transition-colors duration-200 hover:bg-brand-green">
-            <span>←</span> Back to Garden
-        </a>
     </div>
 
-    <div class="flex flex-col gap-6 w-full">
-        @if (!diaryEntries.Any())
-        {
-            <div class="flex flex-col p-6 gap-4 bg-white border-[3px] border-brand-dark shadow-[0_8px_16px_rgba(30,30,30,0.08)] rounded-[24px]">
-                <p class="text-[14px] leading-[140%] text-brand-dark m-0">No diary entries recorded yet! Plant a cat mood in the garden to start your log.</p>
-            </div>
-        }
-        else
-        {
-            @foreach (var rowChunk in diaryEntries.Chunk(3))
+    @if (!diaryEntries.Any())
+    {
+        <div class="flex flex-col items-center justify-center flex-grow p-10 bg-white border-[3px] border-brand-dark shadow-[6px_6px_0px_0px_#1E1E1E] rounded-[24px] text-center mt-4">
+            <div class="text-[80px] mb-4 animate-bounce">🛌🐈</div>
+            <h3 class="font-display font-bold text-[24px] text-brand-dark mb-2">It's awfully quiet here...</h3>
+            <p class="text-[16px] text-brand-gray max-w-md">You haven't recorded any diary entries yet! Head back to the garden and plant a cat to start your emotional log.</p>
+        </div>
+    }
+    else
+    {
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+            @foreach (var entry in diaryEntries)
             {
-                <div class="flex gap-6 w-full">
-                    @foreach (var entry in rowChunk)
-                    {
-                        <div class="flex flex-col p-6 gap-4 flex-1 bg-white border-[3px] border-brand-dark shadow-[0_8px_16px_rgba(30,30,30,0.08)] rounded-[24px]">
-                            <div class="flex justify-between items-center w-full">
-                                <div class="flex justify-center items-center w-[56px] h-[56px] bg-brand-light border-2 border-brand-dark rounded-full text-[28px]">
-                                    @entry.Emoji
-                                </div>
-                                <div class="flex items-center justify-center px-3 py-1 bg-brand-pink border-[1.5px] border-brand-dark rounded-full font-bold text-[12px] text-brand-dark">
-                                    @entry.MoodName
-                                </div>
-                            </div>
-                            <div class="flex flex-col gap-1.5">
-                                <span class="font-semibold text-[12px] text-brand-gray">@entry.TimeAgo</span>
-                                <p class="text-[14px] leading-[140%] text-brand-dark m-0">@entry.Note</p>
-                            </div>
+                <div class="flex flex-col p-6 gap-4 bg-white border-[3px] border-brand-dark shadow-[4px_4px_0px_0px_#1E1E1E] rounded-[24px] transition-transform hover:-translate-y-1">
+                    <div class="flex justify-between items-center w-full">
+                        <div class="flex justify-center items-center w-[56px] h-[56px] bg-brand-light border-[2.5px] border-brand-dark rounded-full text-[28px]">
+                            @entry.Emoji
                         </div>
-                    }
+                        <div class="flex items-center justify-center px-4 py-1.5 bg-brand-pink border-[2px] border-brand-dark rounded-full font-bold text-[12px] text-brand-dark shadow-[2px_2px_0px_0px_#1E1E1E]">
+                            @entry.MoodName
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-2 mt-2">
+                        <span class="font-bold text-[11px] uppercase tracking-wider text-brand-gray">@entry.TimeAgo</span>
+                        <p class="text-[15px] leading-relaxed text-brand-dark font-medium m-0">@entry.Note</p>
+                    </div>
                 </div>
             }
-        }
-    </div>
+        </div>
+    }
 </div>
 
 @code {
     private record DiaryEntry(string Emoji, string MoodName, string TimeAgo, string Note);
 
+    // Swap this to an empty list to test the rich empty state!
     private List<DiaryEntry> diaryEntries = new()
     {
         new("😴", "Sleepy", "1 hour ago", "Had a cozy afternoon nap under the imaginary big tree. Feeling refreshed and lazy."),

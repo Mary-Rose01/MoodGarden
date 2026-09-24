@@ -16,4 +16,14 @@
   --color-brand-brown: #7A6250;
   --color-brand-grad-start: #D8ECEF;
   --color-brand-grad-end: #C6E4E6;
+
+  /* Animations */
+  --animate-float-slow: float 25s linear infinite;
+  --animate-float-med: float 18s linear infinite;
+  --animate-float-fast: float 12s linear infinite;
+
+  @keyframes float {
+    0% { transform: translateX(-150px); }
+    100% { transform: translateX(100vw); }
+  }
 }

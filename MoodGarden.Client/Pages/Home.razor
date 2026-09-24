@@ -1,42 +1,44 @@
 ﻿@page "/"
 @rendermode InteractiveWebAssembly
 
-<div class="flex flex-col h-full -m-10">
+<div class="flex flex-col h-full -m-6 md:-m-10">
     <!-- Canvas -->
     <div class="relative flex-grow bg-gradient-to-br from-brand-grad-start to-brand-grad-end border-b-[3px] border-brand-dark overflow-hidden cursor-pointer" @onclick="PlantCat">
-        <div class="absolute bg-white/80 rounded-full w-[132px] h-[53px] left-[100px] top-[40px]"></div>
-        <div class="absolute bg-white/80 rounded-full w-[121px] h-[48px] left-[520px] top-[30px]"></div>
-        <div class="absolute bg-white/80 rounded-full w-[99px] h-[40px] left-[950px] top-[60px]"></div>
+        <!-- Animated Clouds -->
+        <div class="absolute bg-white/90 border-2 border-brand-dark rounded-full w-[132px] h-[53px] top-[10%] animate-float-slow -left-[150px]"></div>
+        <div class="absolute bg-white/90 border-2 border-brand-dark rounded-full w-[121px] h-[48px] top-[30%] animate-float-fast -left-[150px]"></div>
+        <div class="absolute bg-white/90 border-2 border-brand-dark rounded-full w-[99px] h-[40px] top-[15%] animate-float-med -left-[150px]" style="animation-delay: 5s;"></div>
         
-        <div class="absolute w-[900px] h-[400px] -left-[200px] top-[280px] bg-brand-green-dark border-[3px] border-brand-dark rounded-full"></div>
-        <div class="absolute w-[1000px] h-[450px] left-[450px] top-[250px] bg-brand-green border-[3px] border-brand-dark rounded-full"></div>
+        <!-- Hills -->
+        <div class="absolute w-[150%] md:w-[900px] h-[300px] md:h-[400px] -left-[10%] md:-left-[200px] -bottom-[100px] md:top-[280px] bg-brand-green-dark border-[3px] border-brand-dark rounded-[100%] md:rounded-full"></div>
+        <div class="absolute w-[150%] md:w-[1000px] h-[350px] md:h-[450px] -right-[20%] md:left-[450px] -bottom-[50px] md:top-[250px] bg-brand-green border-[3px] border-brand-dark rounded-[100%] md:rounded-full"></div>
 
-        <div class="absolute left-1/2 -translate-x-1/2 top-[20px] flex items-center gap-2 px-6 py-3 bg-white border-[2.5px] border-brand-dark shadow-[0_8px_16px_rgba(30,30,30,0.08)] rounded-[16px] font-bold text-[14px] text-brand-dark z-20">
-            💡 Select your mood cat and tap anywhere in the garden to plant!
+        <div class="absolute left-1/2 -translate-x-1/2 top-[20px] flex items-center gap-2 px-6 py-3 bg-white border-[2.5px] border-brand-dark shadow-[4px_4px_0px_0px_#1E1E1E] rounded-[16px] font-bold text-[14px] text-brand-dark z-20 text-center w-[90%] md:w-auto">
+            💡 Tap anywhere in the garden to plant your mood!
         </div>
 
         @foreach (var cat in plantedCats)
         {
             <div class="absolute flex flex-col items-center gap-[2px] -translate-x-1/2 -translate-y-full animate-[popIn_0.3s_cubic-bezier(0.175,0.885,0.32,1.275)]" style="left: @(cat.PositionX)%; top: @(cat.PositionY)%;">
-                <div class="flex justify-center items-center w-[56px] h-[56px] bg-white border-[3px] border-brand-dark shadow-[0_8px_16px_rgba(30,30,30,0.08)] rounded-[28px] text-[28px]">
+                <div class="flex justify-center items-center w-[56px] h-[56px] bg-white border-[3px] border-brand-dark shadow-[4px_4px_0px_0px_#1E1E1E] rounded-[28px] text-[28px]">
                     @cat.Emoji
                 </div>
-                <div class="w-[24px] h-[6px] bg-brand-brown rounded-full"></div>
+                <div class="w-[24px] h-[6px] bg-brand-brown border border-brand-dark rounded-full mt-1"></div>
             </div>
         }
     </div>
 
     <!-- Bottom Tray -->
-    <div class="flex flex-col items-center py-6 px-8 gap-4 bg-white h-[140px]">
-        <span class="font-display font-bold text-[18px] text-brand-dark">How are you feeling right now? Pick a mood:</span>
-        <div class="flex gap-4">
+    <div class="flex flex-col items-center py-6 px-4 md:px-8 gap-4 bg-white md:h-[140px]">
+        <span class="font-display font-bold text-[16px] md:text-[18px] text-brand-dark">How are you feeling right now? Pick a mood:</span>
+        <div class="flex flex-wrap justify-center gap-3 md:gap-4 w-full max-w-3xl">
             @foreach (var mood in moodOptions)
             {
-                <button class="flex flex-col items-center justify-center w-[72px] h-[76px] bg-white border-[2.5px] border-brand-dark rounded-[16px] cursor-pointer transition-all duration-200 @(selectedEmoji == mood.Emoji ? "bg-brand-pink shadow-[0_8px_16px_rgba(30,30,30,0.08)]" : "")" 
+                <button class="flex flex-col items-center justify-center w-[64px] h-[68px] md:w-[72px] md:h-[76px] bg-white border-[2.5px] border-brand-dark rounded-[16px] cursor-pointer transition-all duration-100 hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_#1E1E1E] active:translate-y-1 active:shadow-[0px_0px_0px_0px_#1E1E1E] @(selectedEmoji == mood.Emoji ? "bg-brand-pink shadow-[4px_4px_0px_0px_#1E1E1E] -translate-y-1" : "")" 
                         @onclick="() => selectedEmoji = mood.Emoji" 
                         @onclick:stopPropagation="true">
-                    <span class="text-[28px]">@mood.Emoji</span>
-                    <span class="text-[11px] font-bold text-brand-dark mt-1">@mood.Name</span>
+                    <span class="text-[24px] md:text-[28px]">@mood.Emoji</span>
+                    <span class="text-[10px] md:text-[11px] font-bold text-brand-dark mt-1">@mood.Name</span>
                 </button>
             }
         </div>
